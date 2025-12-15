@@ -32,7 +32,7 @@ public class UserController {
         String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponse(token);
     }
-g
+
 
     @GetMapping("/{id}")
     public UserResponse getById(@PathVariable Long id) {
