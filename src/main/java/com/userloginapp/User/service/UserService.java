@@ -32,6 +32,7 @@ public class UserService {
                 .email(email)
                 .passwordHash(passwordEncoder.encode(req.password())) // hash password
                 .deleted(false)
+                .role(req.role())
                 .build();
 
         return repo.save(u);

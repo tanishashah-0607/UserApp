@@ -24,4 +24,8 @@ public class UserEntity {
 
     @Column(nullable=false)
     private boolean deleted = false;
+
+    @Column(nullable = false)
+    private String role;
+
 }
