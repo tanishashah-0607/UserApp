@@ -58,10 +58,16 @@ public class UserService {
     }
 
     // Update name
-    public UserEntity updateName(Long id, String fullName) {
-        UserEntity u = getActiveById(id);
-        u.setFullName(fullName);
-        return repo.save(u);
+    public UserEntity updateName(String email, String fullName) {
+
+        UserEntity user = repo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.isDeleted()) {
+            throw new RuntimeException("User is deleted");
+        }
+        user.setFullName(fullName);
+        return repo.save(user);
     }
 
     // Soft delete
