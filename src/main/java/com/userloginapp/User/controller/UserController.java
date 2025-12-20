@@ -68,4 +68,17 @@ public class UserController {
         service.hardDelete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @Valid @RequestBody ChangePasswordRequest req,
+            Authentication authentication
+    ) {
+        service.changePassword(authentication.getName(), req);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+
+
 }

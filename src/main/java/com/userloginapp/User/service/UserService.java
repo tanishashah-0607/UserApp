@@ -1,5 +1,6 @@
 package com.userloginapp.User.service;
 
+import com.userloginapp.User.dto.ChangePasswordRequest;
 import com.userloginapp.User.entity.UserEntity;
 import com.userloginapp.User.exception.BadRequestException;
 import com.userloginapp.User.exception.ResourceNotFoundException;
@@ -7,11 +8,10 @@ import com.userloginapp.User.exception.UnauthorizedException;
 import com.userloginapp.User.repo.UserRepo;
 import com.userloginapp.User.dto.RegisterRequest;
 import com.userloginapp.User.dto.LoginRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -87,4 +87,23 @@ public class UserService {
     private String norm(String email) {
         return email == null ? null : email.toLowerCase().trim();
     }
+
+
+    public void changePassword(String email, @Valid ChangePasswordRequest req) {
+
+        UserEntity user = repo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.isDeleted()) {
+            throw new ResourceNotFoundException("User is deleted");
+        }
+
+        if (!passwordEncoder.matches(req.oldPassword(), user.getPasswordHash())) {
+            throw new BadRequestException("Old password is incorrect");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(req.newPassword()));
+        repo.save(user);
+    }
+
 }
